@@ -1,59 +1,140 @@
-// CEIGE · Portal de Validación
-// Cambia las palabras y ubicaciones aquí cuando definas las fases.
-// Recomendación: escribir las claves en MAYÚSCULAS, sin tildes.
+// CEIGE · Portal de Validación v3.0
+// Edita estas claves cuando definamos las fases reales.
 
-const respuestas = {
+const fases = {
   "INICIO": {
-    titulo: "Validación exitosa",
-    ubicacion: "Recompensa autorizada. Ubicación: por definir.",
-    nota: "Fase de Inicio completada."
-  },
-  "COFRE": {
-    titulo: "Cofre autorizado",
-    ubicacion: "Ubicación de la llave/cofre: por definir.",
-    nota: "Registro aprobado por CEIGE."
+    fase: "FASE I",
+    titulo: "Fase de Inicio completada",
+    ubicacion: "Ubicación de recompensa: por definir.",
+    nota: "El sujeto ha obtenido acceso al siguiente protocolo."
   },
   "POLLITO": {
-    titulo: "Recompensa desbloqueada",
-    ubicacion: "Ubicación: por definir.",
-    nota: "No existen registros equivalentes."
+    fase: "FASE II",
+    titulo: "Registro validado",
+    ubicacion: "Ubicación de recompensa: por definir.",
+    nota: "La información coincide con el archivo CG-001."
+  },
+  "COFRE": {
+    fase: "FASE III",
+    titulo: "Cofre autorizado",
+    ubicacion: "Ubicación del cofre: por definir.",
+    nota: "Se recomienda conservar todos los elementos obtenidos."
   }
 };
 
-function normalizar(texto){
-  return texto
-    .trim()
-    .toUpperCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+const totalFases = ["FASE I","FASE II","FASE III","FASE IV","FASE V","FASE VI"];
+
+const code = document.getElementById("code");
+const validate = document.getElementById("validate");
+const scan = document.getElementById("scan");
+const scanText = document.getElementById("scanText");
+const barFill = document.getElementById("barFill");
+const result = document.getElementById("result");
+const phaseList = document.getElementById("phaseList");
+
+function normalize(text){
+  return text.trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 }
 
-const form = document.getElementById("validationForm");
-const input = document.getElementById("keyword");
-const result = document.getElementById("result");
+function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-form.addEventListener("submit", function(event){
-  event.preventDefault();
+function getCompleted(){
+  return JSON.parse(localStorage.getItem("ceige_completed") || "[]");
+}
 
-  const clave = normalizar(input.value);
+function setCompleted(fase){
+  const completed = new Set(getCompleted());
+  completed.add(fase);
+  localStorage.setItem("ceige_completed", JSON.stringify([...completed]));
+  renderProgress();
+}
 
-  if(respuestas[clave]){
-    const r = respuestas[clave];
+function renderProgress(){
+  const completed = getCompleted();
+  phaseList.innerHTML = totalFases.map(fase => {
+    const done = completed.includes(fase);
+    return `<div class="phase ${done ? "done" : ""}">${done ? "✔" : "□"} ${fase}</div>`;
+  }).join("");
+}
+
+function typeText(element, html, speed = 12){
+  element.innerHTML = "";
+  let i = 0;
+  const plain = html;
+  return new Promise(resolve => {
+    const timer = setInterval(() => {
+      element.innerHTML = plain.slice(0, i);
+      i++;
+      if(i > plain.length){
+        clearInterval(timer);
+        element.innerHTML = html;
+        resolve();
+      }
+    }, speed);
+  });
+}
+
+async function runScan(){
+  scan.classList.remove("hidden");
+  result.className = "result hidden";
+  result.innerHTML = "";
+
+  scanText.textContent = "Conectando con servidores CEIGE...";
+  barFill.style.width = "22%";
+  await wait(650);
+
+  scanText.textContent = "Consultando expediente CG-001...";
+  barFill.style.width = "58%";
+  await wait(750);
+
+  scanText.textContent = "Verificando autorización...";
+  barFill.style.width = "86%";
+  await wait(700);
+
+  scanText.textContent = "Generando respuesta oficial...";
+  barFill.style.width = "100%";
+  await wait(550);
+}
+
+validate.addEventListener("click", async () => {
+  const key = normalize(code.value);
+  await runScan();
+  scan.classList.add("hidden");
+
+  if(fases[key]){
+    const data = fases[key];
+    setCompleted(data.fase);
     result.className = "result success";
-    result.innerHTML = `
-      <h2>${r.titulo}</h2>
-      <p><strong>Estado:</strong> VALIDADO</p>
-      <p>${r.ubicacion}</p>
-      <p><em>${r.nota}</em></p>
+    result.classList.remove("hidden");
+
+    const html = `
+      <h2>✔ EXPEDIENTE LOCALIZADO</h2>
+      <div class="seal">${data.fase} COMPLETADA</div>
+      <p><strong>SUJETO:</strong> GUSTAVO</p>
+      <p><strong>ESTADO:</strong> VERIFICADO</p>
+      <hr>
+      <h2>RECOMPENSA AUTORIZADA</h2>
+      <p>${data.ubicacion}</p>
+      <p><em>${data.nota}</em></p>
+      <p><strong>Estado del sujeto:</strong> APTO PARA CONTINUAR</p>
     `;
+    result.innerHTML = html;
   } else {
     result.className = "result error";
+    result.classList.remove("hidden");
     result.innerHTML = `
-      <h2>Acceso denegado</h2>
-      <p>La palabra ingresada no coincide con ningún registro activo.</p>
-      <p>Revisa la fase e inténtalo nuevamente.</p>
+      <h2>⛔ ACCESO DENEGADO</h2>
+      <p>No existe ningún registro compatible con el código ingresado.</p>
+      <p>Verifique la palabra obtenida durante la fase.</p>
+      <p><strong>Código:</strong> CEIGE-404</p>
     `;
   }
-
-  result.classList.remove("hidden");
 });
+
+code.addEventListener("keydown", (e) => {
+  if(e.key === "Enter") validate.click();
+});
+
+renderProgress();

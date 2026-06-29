@@ -2,39 +2,64 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CEIGE · Portal de Validación</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <main class="page">
-    <section class="card">
-      <div class="topline">
-        <span>CEIGE INC.</span>
-        <span>FILE CG-001</span>
+  <div class="noise"></div>
+
+  <main class="terminal">
+    <div class="topline">
+      <span>CEIGE INC.</span>
+      <span>FILE CG-001</span>
+    </div>
+
+    <div class="stamp">PORTAL OFICIAL</div>
+
+    <h1>PORTAL DE<br>VALIDACIÓN</h1>
+    <p class="subtitle">OPERACIÓN POLLI MISTERIOS · VOLUMEN II</p>
+
+    <section class="system-panel">
+      <div class="system-row">
+        <span>Estado del sistema</span>
+        <strong class="online">● EN LÍNEA</strong>
       </div>
-
-      <div class="stamp">PORTAL OFICIAL</div>
-
-      <h1>Portal de Validación</h1>
-      <p class="subtitle">Operación Polli Misterios · Volumen II</p>
-
-      <p class="message">
-        Ingresa la palabra clave obtenida durante la fase para validar el acceso a la recompensa.
-      </p>
-
-      <form id="validationForm">
-        <label for="keyword">Palabra clave</label>
-        <input id="keyword" type="text" autocomplete="off" placeholder="Escribe aquí..." />
-        <button type="submit">VALIDAR</button>
-      </form>
-
-      <div id="result" class="result hidden"></div>
-
-      <p class="footer-note">
-        Noni License® · Creative Studio & Memory Laboratory
-      </p>
+      <div class="system-row">
+        <span>Sujeto asignado</span>
+        <strong>GUSTAVO</strong>
+      </div>
+      <div class="system-row">
+        <span>Unidad responsable</span>
+        <strong>NONI LICENSE™</strong>
+      </div>
     </section>
+
+    <p class="intro">
+      Ingresa el código de autorización obtenido durante la fase para validar el acceso a la recompensa.
+    </p>
+
+    <label for="code">CÓDIGO DE AUTORIZACIÓN</label>
+    <input id="code" type="text" placeholder="CG-001" autocomplete="off"/>
+
+    <button id="validate">INICIAR VALIDACIÓN</button>
+
+    <section id="scan" class="scan hidden">
+      <p id="scanText">Inicializando protocolo...</p>
+      <div class="bar"><span id="barFill"></span></div>
+    </section>
+
+    <section id="result" class="result hidden"></section>
+
+    <section class="progress">
+      <h3>REGISTRO DE FASES</h3>
+      <div id="phaseList" class="phase-list"></div>
+    </section>
+
+    <footer>
+      Powered by <b>Noni License™</b><br>
+      in collaboration with <b>CEIGE Memory Laboratory</b>
+    </footer>
   </main>
 
   <script src="script.js"></script>
