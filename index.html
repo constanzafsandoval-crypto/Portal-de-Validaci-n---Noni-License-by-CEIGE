@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CEIGE · Portal de Validación</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="card">
+      <div class="topline">
+        <span>CEIGE INC.</span>
+        <span>FILE CG-001</span>
+      </div>
+
+      <div class="stamp">PORTAL OFICIAL</div>
+
+      <h1>Portal de Validación</h1>
+      <p class="subtitle">Operación Polli Misterios · Volumen II</p>
+
+      <p class="message">
+        Ingresa la palabra clave obtenida durante la fase para validar el acceso a la recompensa.
+      </p>
+
+      <form id="validationForm">
+        <label for="keyword">Palabra clave</label>
+        <input id="keyword" type="text" autocomplete="off" placeholder="Escribe aquí..." />
+        <button type="submit">VALIDAR</button>
+      </form>
+
+      <div id="result" class="result hidden"></div>
+
+      <p class="footer-note">
+        Noni License® · Creative Studio & Memory Laboratory
+      </p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
