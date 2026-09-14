@@ -1,61 +1,53 @@
-// CEIGE · Portal de Validación v4.0
+// CEIGE · Portal de Validación v5.0
 // Operación Polli Misterios · Volumen II
 
 const fases = {
   "RECONSTRUCCION": {
     fase: "FASE I",
     titulo: "RECONSTRUCCIÓN VALIDADA",
-    recompensa: "EQUIPAMIENTO OPERATIVO DEL SUJETO",
     ubicacion: "Diríjase al mesón de la cocina. La unidad autorizada se encuentra sobre la superficie.",
-    nota: "Recupere la recompensa y regrese al centro de operaciones para continuar."
+    nota: "Recupere el elemento asignado y regrese al centro de operaciones para continuar."
   },
   "UMBRAL": {
     fase: "FASE II",
     titulo: "UMBRAL SUPERADO",
-    recompensa: "KIT EXTRA DE ADAPTACIÓN DEL SUJETO",
     ubicacion: "Diríjase al baño. La unidad autorizada se encuentra en ese sector.",
-    nota: "Recupere la recompensa y regrese al centro de operaciones para continuar."
+    nota: "Recupere el elemento asignado y regrese al centro de operaciones para continuar."
   },
   "ALQUIMIA": {
     fase: "FASE III",
     titulo: "MENSAJE RECUPERADO",
-    recompensa: "KIT DE MANTENIMIENTO DEL SUJETO",
     ubicacion: "Inspeccione la zona posterior del sillón. La unidad autorizada se encuentra allí.",
-    nota: "Recupere la recompensa y regrese al centro de operaciones para continuar."
+    nota: "Recupere el elemento asignado y regrese al centro de operaciones para continuar."
   },
   "ENCUENTROS": {
     fase: "FASE IV",
     titulo: "CLASIFICACIÓN VALIDADA",
-    recompensa: "ACTUALIZACIÓN DE APARIENCIA DEL SUJETO",
     ubicacion: "Revise las sillas del comedor. La unidad autorizada se encuentra en ese sector.",
-    nota: "Recupere la recompensa y regrese al centro de operaciones para continuar."
+    nota: "Recupere el elemento asignado y regrese al centro de operaciones para continuar."
   },
   "INDICIO": {
     fase: "FASE V",
     titulo: "INDICIO AUTORIZADO",
-    recompensa: "UNIDAD DE ALMACENAMIENTO DEL SUJETO",
     ubicacion: "Diríjase al mueble destinado al almacenamiento de platos. La unidad autorizada se encuentra allí.",
-    nota: "Recupere la recompensa y regrese al centro de operaciones para continuar."
+    nota: "Recupere el elemento asignado y regrese al centro de operaciones para continuar."
   },
   "ACCESO": {
     fase: "FASE VI",
     titulo: "CASO CERRADO",
-    recompensa: "PAQUETE DE DISFRUTE DEL SUJETO",
     ubicacion: "Revise el interior de la lavadora. La unidad autorizada se encuentra dentro.",
-    nota: "Recupere la recompensa y regrese al centro de operaciones para continuar."
+    nota: "Recupere el elemento asignado y regrese al centro de operaciones para continuar."
   },
   "DESTINO": {
     fase: "FASE VII",
     titulo: "DESTINO CONFIRMADO",
-    recompensa: "SISTEMA DE ACONDICIONAMIENTO DEL SUJETO",
     ubicacion: "Diríjase a la terraza. La unidad autorizada se encuentra en ese sector.",
-    nota: "Recupere la recompensa y regrese al centro de operaciones para continuar."
+    nota: "Recupere el elemento asignado y regrese al centro de operaciones para continuar."
   },
   "HUELLA": {
     fase: "FASE VIII",
     finalAparente: true,
     titulo: "OPERACIÓN COMPLETADA",
-    recompensa: "OBJETIVO FINAL LOCALIZADO",
     ubicacion: "Diríjase al mueble destinado al almacenamiento de tazas. Allí se encuentra el elemento final autorizado.",
     nota: "Recupere el elemento asignado y siga las instrucciones encontradas en el lugar."
   }
@@ -64,9 +56,8 @@ const fases = {
 const protocoloFinal = {
   codigo: "EPILOGO",
   titulo: "PROTOCOLO FINAL DESBLOQUEADO",
-  recompensa: "ARCHIVO DE MEMORIA COMPARTIDA DEL SUJETO",
   ubicacion: "DESTINO DEFINITIVO: arriba del refrigerador.",
-  nota: "Autorización final concedida. Recupere el archivo y complete la operación."
+  nota: "Autorización final concedida. Recupere el último elemento y complete la operación."
 };
 
 const totalFases = [
@@ -74,7 +65,7 @@ const totalFases = [
   "FASE V", "FASE VI", "FASE VII", "FASE VIII"
 ];
 
-const STORAGE_KEY = "ceige_completed_v4";
+const STORAGE_KEY = "ceige_completed_v5";
 
 const code = document.getElementById("code");
 const validate = document.getElementById("validate");
@@ -121,7 +112,7 @@ async function runScan(finalMode = false){
   result.innerHTML = "";
   barFill.style.width = "0%";
 
-  scanText.textContent = finalMode ? "Detectando protocolo restringido..." : "Conectando con servidores CEIGE...";
+  scanText.textContent = finalMode ? "Detectando protocolo restringido..." : "Conectando con archivos CEIGE...";
   barFill.style.width = "22%";
   await wait(550);
 
@@ -144,6 +135,7 @@ function showStandardResult(data){
 
   const headline = data.finalAparente ? "✓ REGISTRO FINAL VALIDADO" : "✓ EXPEDIENTE LOCALIZADO";
   const state = data.finalAparente ? "CIERRE AUTORIZADO" : "VERIFICADO";
+  const locationTitle = data.finalAparente ? "OBJETIVO FINAL" : "UBICACIÓN AUTORIZADA";
 
   result.innerHTML = `
     <h2>${headline}</h2>
@@ -151,11 +143,12 @@ function showStandardResult(data){
     <p><strong>SUJETO:</strong> GUSTAVO</p>
     <p><strong>ESTADO:</strong> ${state}</p>
     <hr>
-    <h2>${data.finalAparente ? "OBJETIVO FINAL" : "RECOMPENSA AUTORIZADA"}</h2>
-    <p class="reward-name"><strong>${data.recompensa}</strong></p>
-    <p>${data.ubicacion}</p>
+    <h2>${locationTitle}</h2>
+    <p class="location-box">${data.ubicacion}</p>
     <p><em>${data.nota}</em></p>
-    ${data.finalAparente ? '<p class="final-status"><strong>OPERACIÓN POLLI MISTERIOS · ESTADO: COMPLETADA</strong></p>' : '<p><strong>Estado del sujeto:</strong> APTO PARA CONTINUAR</p>'}
+    ${data.finalAparente
+      ? '<p class="final-status"><strong>OPERACIÓN POLLI MISTERIOS · ESTADO: COMPLETADA</strong></p>'
+      : '<p><strong>Estado del sujeto:</strong> APTO PARA CONTINUAR</p>'}
   `;
 }
 
@@ -170,12 +163,64 @@ function showFinalProtocol(){
     <p><strong>NIVEL DE ACCESO:</strong> DEFINITIVO</p>
     <hr>
     <p>El registro anterior no correspondía al destino definitivo.</p>
-    <h2>ÚLTIMA RECOMPENSA AUTORIZADA</h2>
-    <p class="reward-name"><strong>${protocoloFinal.recompensa}</strong></p>
+    <h2>DESTINO DEFINITIVO</h2>
     <p class="final-location">${protocoloFinal.ubicacion}</p>
     <p><em>${protocoloFinal.nota}</em></p>
     <p class="operation-complete"><strong>OPERACIÓN COMPLETADA</strong></p>
+    <button id="finishExperience" class="finish-button">FINALIZAR EXPERIENCIA</button>
   `;
+
+  document.getElementById("finishExperience").addEventListener("click", showFarewell);
+}
+
+function showFarewell(){
+  result.className = "result farewell";
+  result.classList.remove("hidden");
+  result.innerHTML = `
+    <div class="farewell-kicker">OPERACIÓN POLLI MISTERIOS · VOL. II</div>
+    <h2>EXPERIENCIA FINALIZADA</h2>
+
+    <div class="farewell-divider">✦</div>
+
+    <p>
+      Si llegaste hasta aquí, significa que Polli Misterios Vol. II
+      ha llegado oficialmente a su fin.
+    </p>
+
+    <p>
+      Todo lo que viste, resolviste y encontraste fue pensado y preparado
+      especialmente para ti. Cada detalle, cada pista y cada pequeña tontera
+      que apareció en el camino fue hecha con muchísimo amor, con la idea de
+      regalarte algo más que cosas: una experiencia que pudieras disfrutar,
+      recordar y que fuera solamente tuya.
+    </p>
+
+    <p>
+      Espero que te hayas divertido tanto viviéndola como yo disfruté
+      imaginándola y preparándola para ti. Quería hacer algo diferente,
+      algo que no se pudiera simplemente comprar, y que cuando lo recordáramos
+      pudiéramos decir que fue una experiencia única e irrepetible.
+    </p>
+
+    <p>
+      Gracias por seguir cada pista, por prestarte para mis ideas y,
+      sobre todo, por llegar hasta el final.
+    </p>
+
+    <p class="wish-message">
+      <strong>Deseo haberte sorprendido, y espero poder seguir haciéndolo
+      durante el resto de mi vida.</strong>
+    </p>
+
+    <p class="love-message">
+      <strong>Feliz cumpleaños, mi pollito.<br>Te amo mucho. ❤️</strong>
+    </p>
+
+    <div class="farewell-signature">
+      — Coni
+    </div>
+  `;
+  result.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 function showError(){
